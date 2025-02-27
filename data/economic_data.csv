@@ -1,4 +1,4 @@
-Country, Year, GDP (in billion USD), Inflation Rate (%), Unemployment Rate (%), Economic Growth (%)
+Country,Year,GDP_(in billion USD),Inflation_Rate,Unemployment_Rate,Economic_Growth
 USA, 2010, 15000, 1.64, 9.63, 2.55
 USA, 2011, 15500, 3.16, 8.94, 1.53
 USA, 2012, 16000, 2.07, 8.10, 2.28

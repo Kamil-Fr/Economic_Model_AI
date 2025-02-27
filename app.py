@@ -4,7 +4,7 @@ import pickle
 
 app = Flask(__name__)
 
-# Wczytywanie modelu raz przy uruchomieniu aplikacji
+# Wczytanie modelu raz przy uruchomieniu aplikacji
 with open('models/model.pkl', 'rb') as f:
     model = pickle.load(f)
 
@@ -18,7 +18,6 @@ def index():
 def get_data():
     # Załaduj dane
     df = pd.read_csv('data/economic_data.csv')
-    
     # Usuwanie nadmiarowych spacji w nazwach kolumn
     df.columns = df.columns.str.strip()
 
@@ -27,7 +26,7 @@ def get_data():
     print(df.columns)
 
     # Upewnij się, że kolumny, które chcesz wybrać, istnieją
-    required_columns = ['Year', 'GDP (in billion USD)', 'Inflation Rate (%)', 'Economic Growth (%)', 'Unemployment Rate (%)']
+    required_columns = ['Year', 'GDP_(in billion USD)', 'Inflation_Rate', 'Unemployment_Rate']
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         return jsonify({'error': f"Brakujące kolumny: {missing_columns}"})
@@ -40,11 +39,13 @@ def get_data():
 
     # Przygotowanie danych do zwrócenia
     data = {
-        'actual': df['Economic Growth (%)'].tolist(),
+        'actual': df['Economic_Growth'].tolist(),
         'predicted': predictions.tolist()
     }
-    
     return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
