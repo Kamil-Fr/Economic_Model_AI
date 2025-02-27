@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Growth Prediction Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #chart {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        #data-table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        #data-table th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #data-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Economic Growth Prediction Visualization</h1>
+    <button id="fetch-btn">Pobierz dane i prognozy</button>
+    <table id="data-table">
+        <!-- Tabela będzie wypełniana danymi -->
+    </table>
+
+    <div id="chart"></div>
+
+    <script>
+        // Funkcja do pobrania danych z backendu
+        function fetchData() {
+            fetch('/get_data')
+                .then(response => response.json())
+                .then(data => {
+                    // Jeśli wystąpił błąd w backendzie
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    // Tworzenie tabeli
+                    const table = document.getElementById('data-table');
+                    const actual = data.actual;
+                    const predicted = data.predicted;
+
+                    // Wyczyść tabelę przed dodaniem nowych danych
+                    table.innerHTML = '';
+
+                    // Dodaj nagłówki tabeli
+                    const headerRow = document.createElement('tr');
+                    const headers = ['Actual GDP per Capita ($)', 'Predicted Growth'];
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.innerText = header;
+                        headerRow.appendChild(th);
+                    });
+                    table.appendChild(headerRow);
+
+                    // Dodaj dane do tabeli
+                    for (let i = 0; i < actual.length; i++) {
+                        const row = document.createElement('tr');
+                        const gdp = document.createElement('td');
+                        gdp.innerText = actual[i];
+                        const growth = document.createElement('td');
+                        growth.innerText = predicted[i];
+                        row.appendChild(gdp);
+                        row.appendChild(growth);
+                        table.appendChild(row);
+                    }
+
+                    // Generowanie wykresu
+                    const trace1 = {
+                        x: actual,
+                        y: predicted,
+                        mode: 'markers',
+                        type: 'scatter',
+                        name: 'Predicted vs Actual',
+                        marker: { color: 'blue', opacity: 0.5 }
+                    };
+
+                    const trace2 = {
+                        x: [Math.min(...actual), Math.max(...actual)],
+                        y: [Math.min(...actual), Math.max(...actual)],
+                        mode: 'lines',
+                        type: 'scatter',
+                        name: 'Perfect Fit',
+                        line: { color: 'red', width: 2 }
+                    };
+
+                    const layout = {
+                        title: 'Actual vs Predicted Economic Growth',
+                        xaxis: {
+                            title: 'Actual GDP per Capita ($)'
+                        },
+                        yaxis: {
+                            title: 'Predicted Growth (%)'
+                        },
+                        showlegend: true
+                    };
+
+                    const dataPlot = [trace1, trace2];
+                    Plotly.newPlot('chart', dataPlot, layout);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Wywołaj funkcję po kliknięciu przycisku
+        document.getElementById('fetch-btn').addEventListener('click', fetchData);
+    </script>
+</body>
+
+</html>
